@@ -6,6 +6,7 @@ import danogl.gui.ImageReader;
 import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.WindowController;
+import danogl.gui.rendering.Camera;
 
 public class PepseGameManager extends GameManager {
 
@@ -17,5 +18,6 @@ public class PepseGameManager extends GameManager {
     public void initializeGame(ImageReader imageReader, SoundReader soundReader, UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
         Sky.create(this.gameObjects(), windowController.getWindowDimensions(), 1); //TODO set sky layer
+
     }
 }
