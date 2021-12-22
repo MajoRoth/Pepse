@@ -1,5 +1,6 @@
 package Pepse.world;
 
+import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.util.Vector2;
 
