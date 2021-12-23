@@ -12,7 +12,7 @@ import java.awt.*;
 
 public class Night {
 
-    private static final Float MIDNIGHT_OPACITY = 0.5f;
+    private static final Float MIDNIGHT_OPACITY = 0.7f;
 
     public static GameObject create(GameObjectCollection gameObjects, Vector2 windowDimensions,
                                     float cycleLength, int layer){
@@ -29,11 +29,5 @@ public class Night {
                 null);
 
         return gameObject;
-    }
-
-
-    private static Vector2 calcSunPosition(Vector2 windowDimensions, float angleInSky){
-
-        throw new java.lang.UnsupportedOperationException("Not supported yet.");
     }
 }
