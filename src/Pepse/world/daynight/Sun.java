@@ -30,7 +30,7 @@ public class Sun {
 
         sunCenter = new Vector2(windowDimensions.x()/2, windowDimensions.y()/2);
         sunVector = new Vector2(windowDimensions.x()/5, windowDimensions.y()/5);
-        
+
         new Transition<Float>(gameObject,
                 (f) -> {gameObject.setCenter(calcSunPosition(windowDimensions, f));},
                 0f,
