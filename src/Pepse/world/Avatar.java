@@ -17,6 +17,6 @@ public class Avatar extends GameObject {
                                 UserInputListener inputListener, ImageReader imageReader){
 
         throw new java.lang.UnsupportedOperationException("Not supported yet.");
-
+        //TODO: implement this class and stuff
     }
 }

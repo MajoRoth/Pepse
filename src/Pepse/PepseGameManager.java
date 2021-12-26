@@ -45,7 +45,7 @@ public class PepseGameManager extends GameManager {
         Terrain terrain = new Terrain(gameObjects(), TERRAIN_LAYER,
                 windowController.getWindowDimensions(), 1);
         terrain.createInRange(0, (int) windowController.getWindowDimensions().x());
-        new Tree(gameObjects(),TRUNK_LAYER,LEAVES_LAYER, 1, Block.SIZE, terrain::groundHeightAt).createInRange(0,
+        new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, 1, Block.SIZE, terrain::groundHeightAt).createInRange(0,
                 (int) windowController.getWindowDimensions().x()); // Dan debugs tree creation
     }
 
