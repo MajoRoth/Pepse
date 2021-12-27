@@ -1,5 +1,6 @@
 package Pepse;
 
+import Pepse.world.Avatar;
 import Pepse.world.Block;
 import Pepse.world.Sky;
 import Pepse.world.Terrain;
@@ -21,13 +22,14 @@ import java.awt.*;
 
 public class PepseGameManager extends GameManager {
 
-    final int SKY_LAYER = Layer.BACKGROUND;
-    final int NIGHT_LAYER = Layer.FOREGROUND;
-    final int SUN_LAYER = Layer.BACKGROUND + 1;
-    final int HALO_LAYER = Layer.BACKGROUND + 2;
-    final int TERRAIN_LAYER = Layer.STATIC_OBJECTS;
-    final int TRUNK_LAYER = Layer.BACKGROUND + 10;
-    final int LEAVES_LAYER = Layer.BACKGROUND + 11;
+    private static final int AVATAR_LAYER = Layer.DEFAULT;
+    private static final int SKY_LAYER = Layer.BACKGROUND;
+    private static final int NIGHT_LAYER = Layer.FOREGROUND;
+    private static final int SUN_LAYER = Layer.BACKGROUND + 1;
+    private static final int HALO_LAYER = Layer.BACKGROUND + 2;
+    private static final int TERRAIN_LAYER = Layer.STATIC_OBJECTS;
+    private static final int TRUNK_LAYER = Layer.BACKGROUND + 10;
+    private static final int LEAVES_LAYER = Layer.BACKGROUND + 11;
 
     public static void main(String[] args) {
         new PepseGameManager().run();
@@ -47,6 +49,13 @@ public class PepseGameManager extends GameManager {
         terrain.createInRange(0, (int) windowController.getWindowDimensions().x());
         new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, 1, Block.SIZE, terrain::groundHeightAt).createInRange(0,
                 (int) windowController.getWindowDimensions().x()); // Dan debugs tree creation
+        Vector2 initialAvatarLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
+        GameObject avatar = Avatar.create(gameObjects(), AVATAR_LAYER,
+                initialAvatarLocation, inputListener, imageReader);
+        setCamera(new Camera(avatar,
+                Vector2.ZERO,
+                windowController.getWindowDimensions(),
+                windowController.getWindowDimensions()));
     }
 
     @FunctionalInterface

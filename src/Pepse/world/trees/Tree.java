@@ -127,7 +127,7 @@ public class Tree {
      * @param trunkHeight the amount of blocks in the trunk
      */
     private void make_trunk(float root_x, float root_y, int trunkHeight) {
-        for (int i = 0; i < trunkHeight; i++) {
+        for (int i = 1; i <= trunkHeight; i++) {
             Vector2 pos = new Vector2(root_x, root_y - i * this.blockSize);
             Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(TRUNK_COLOR));
             GameObject trunk_obj = new GameObject(pos, Vector2.ONES.mult(this.blockSize), rect);
