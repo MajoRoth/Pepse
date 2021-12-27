@@ -58,6 +58,8 @@ public class PepseGameManager extends GameManager {
                 windowController.getWindowDimensions()));
     }
 
+
+
     @FunctionalInterface
     public interface Component {
         void update(float deltaTime);
