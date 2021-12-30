@@ -113,7 +113,7 @@ public class Tree {
                             leafObj::setDimensions,
                             leafObj.getDimensions(),
                             leafObj.getDimensions().multX(1.2f),
-                            Transition.LINEAR_INTERPOLATOR_VECTOR,
+                            Transition.CUBIC_INTERPOLATOR_VECTOR,
                             1.3f,
                             Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                             null);
