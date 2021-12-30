@@ -1,14 +1,16 @@
 package Pepse.memento;
 
-import danogl.collisions.GameObjectCollection;
+import danogl.GameObject;
+
+import java.util.LinkedList;
 
 public class Memento {
-    private final GameObjectCollection state;
-    public Memento(GameObjectCollection gameObjects){
+    private final LinkedList<GameObject> state;
+    public Memento(LinkedList<GameObject> gameObjects){
         this.state = gameObjects;
     }
 
-    public GameObjectCollection getState(){
+    public LinkedList<GameObject> getState(){
         return this.state;
     }
 }

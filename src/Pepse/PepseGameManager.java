@@ -22,10 +22,7 @@ import danogl.gui.rendering.Camera;
 import danogl.util.Vector2;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class PepseGameManager extends GameManager {
 
@@ -35,8 +32,10 @@ public class PepseGameManager extends GameManager {
     private static final int SUN_LAYER = Layer.BACKGROUND + 1;
     private static final int HALO_LAYER = Layer.BACKGROUND + 2;
     private static final int TERRAIN_LAYER = Layer.STATIC_OBJECTS;
+    private static final int TOPGROUND_LAYER = TERRAIN_LAYER + 1;
     private static final int TRUNK_LAYER = Layer.BACKGROUND + 10;
     private static final int LEAVES_LAYER = Layer.BACKGROUND + 11;
+    private static final int FALLING_LEAF_LAYER = LEAVES_LAYER + 1;
     private static final int NIGHT_CYCLE = 100;
     // For memento
     private static final Map<String, Integer> tagToLayerMap = new HashMap<String, Integer>();
@@ -60,6 +59,8 @@ public class PepseGameManager extends GameManager {
         tagToLayerMap.put("trunk", TRUNK_LAYER);
         tagToLayerMap.put("leaf", LEAVES_LAYER);
         tagToLayerMap.put("block", TERRAIN_LAYER);
+        tagToLayerMap.put("topGround", TOPGROUND_LAYER);
+        tagToLayerMap.put("fallingLeaf", FALLING_LEAF_LAYER);
         this.windowWidth = windowController.getWindowDimensions().x();
         //~~~until here
         Sky.create(this.gameObjects(), windowController.getWindowDimensions(), SKY_LAYER);
@@ -68,12 +69,12 @@ public class PepseGameManager extends GameManager {
                 SUN_LAYER);
         SunHalo.create(gameObjects(), sun, new Color(255, 255, 0, 20), HALO_LAYER);
         //changed from local variable for memento
-        this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER,
+        this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER, TOPGROUND_LAYER,
                 windowController.getWindowDimensions(), 1);
-        terrain.createInRange(-1*(int)windowWidth, 2*(int)windowWidth);
-        this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, 1, Block.SIZE,
+        terrain.createInRange((int) (-1 * windowWidth), (int) (2 * windowWidth));
+        this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, 1, Block.SIZE,
                 terrain::groundHeightAt);
-        tree.createInRange(-1*(int)windowWidth, 2*(int)windowWidth); // Dan debugs tree creation
+        tree.createInRange(-1 * (int) windowWidth, 2 * (int) windowWidth); // Dan debugs tree creation
         //~~~until here
         Vector2 initialAvatarLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
         GameObject avatar = Avatar.create(gameObjects(), AVATAR_LAYER,
@@ -82,6 +83,10 @@ public class PepseGameManager extends GameManager {
                 Vector2.ZERO,
                 windowController.getWindowDimensions(),
                 windowController.getWindowDimensions()));
+        gameObjects().addGameObject(new GameObject(Vector2.ZERO, Vector2.ZERO, null), FALLING_LEAF_LAYER);
+        gameObjects().layers().shouldLayersCollide(FALLING_LEAF_LAYER, TOPGROUND_LAYER, true);
+        gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TOPGROUND_LAYER, true);
+        gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TERRAIN_LAYER, false);
     }
 
 
@@ -101,7 +106,7 @@ public class PepseGameManager extends GameManager {
             getOrGenerate(newKey + 1);
             curCareTakerKey += 1;
         } else if (newKey < this.curCareTakerKey) { // if moved a screen lefwards
-            removeAndStore(newKey + 1);
+            removeAndStore(newKey + 2);
             getOrGenerate(newKey - 1);
             curCareTakerKey -= 1;
         }
@@ -115,7 +120,7 @@ public class PepseGameManager extends GameManager {
             terrain.createInRange(minX, maxX);
             tree.createInRange(minX, maxX);
         } else { //Add
-            GameObjectCollection add = add_m.getState();
+            LinkedList<GameObject> add = add_m.getState();
             for (GameObject obj : add) {
                 gameObjects().addGameObject(obj, tagToLayerMap.get(obj.getTag()));
             }
@@ -125,12 +130,14 @@ public class PepseGameManager extends GameManager {
     private void removeAndStore(int key) {
         String[] tags = new String[]{"trunk", "leaf", "block"};
         ArrayList<String> tags_array_list = new ArrayList<String>(Arrays.asList(tags));
-        GameObjectCollection rem = getObjectsOfTags(tags_array_list, keyToX(key), keyToX(key + 1));
+        LinkedList<GameObject> rem = getObjectsOfTags(tags_array_list, keyToX(key), keyToX(key + 1));
         careTaker.add(key, new Memento(rem));
         for (GameObject obj : rem) {
-            gameObjects().removeGameObject(obj, tagToLayerMap.get(obj.getTag()));
+            String tag = obj.getTag();
+            gameObjects().removeGameObject(obj, tagToLayerMap.get(tag));
         }
     }
+
 
     private int xToKey(float x) {
         int negativeOffset = x < 0 ? 1 : 0;
@@ -141,12 +148,12 @@ public class PepseGameManager extends GameManager {
         return key * this.windowWidth;
     }
 
-    private GameObjectCollection getObjectsOfTags(ArrayList<String> tags, float minX, float maxX) {
-        GameObjectCollection ret = new GameObjectCollection();
+    private LinkedList<GameObject> getObjectsOfTags(ArrayList<String> tags, float minX, float maxX) {
+        LinkedList<GameObject> ret = new LinkedList<>();
         for (GameObject obj : gameObjects()) {
             boolean inRange = obj.getTopLeftCorner().x() >= minX && obj.getTopLeftCorner().x() < maxX;
             if (tags.contains(obj.getTag()) && inRange) {
-                ret.addGameObject(obj, tagToLayerMap.get(obj.getTag()));
+                ret.add(obj);
             }
         }
         return ret;

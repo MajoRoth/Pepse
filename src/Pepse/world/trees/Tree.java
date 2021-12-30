@@ -16,25 +16,42 @@ import java.util.function.Function;
 public class Tree {
     private static final Color TRUNK_COLOR = new Color(100, 50, 20);
     private static final Color LEAF_COLOR = new Color(50, 200, 30);
-    private static final int CANOPY_MAX = 14;
+    private static final int CANOPY_MAX = 12;
     private static final int CANOPY_MIN = 7;
     private static final int TREE_MAX_HEIGHT = 17;
     private static final int TREE_MIN_HEIGHT = 12;
-    private static final float TREE_PROB = 0.1f;
+    private static final float TREE_PROB = 0.075f;
+    private static final float FADE_OUT_TIME = 4f;
+    private static final float LEAF_FALLING_VELOCITY = 150;
+    private static final float ANIMATION_WAIT_TIME_MAX = 2f;
+    private static final float LEAF_LIFE_TIME_MAX = 30f;
+    private static final float LEAF_DEATH_TIME_MAX = 25f;
+    private static final Float LEAF_ANGLE_MIN = -5f;
+    private static final Float LEAF_ANGLE_MAX = 10f;
+    private static final float LEAF_ANIMATION_CYCLE_DURATION = 1f;
+    private static final float LEAF_MIN_WIDTH_FACTOR = 0.9f;
+    private static final float LEAF_MAX_WIDTH_FACTOR = 1.1f;
+    private static final Float LEAF_X_MAX_VEL = 30f;
+    private static final float LEAF_VEL_TRANSITION_TIME = 1.5f;
+    private static final String FALLING_LEAF_TAG = "fallingLeaf";
 
 
     private final GameObjectCollection gameObjects;
     private final int trunkLayer;
     private final int leavesLayer;
+    private int fallingLeavesLayer;
     private final Random rnd;
     private final float blockSize;
     private final Function<Float, Float> getTerrainHeight;
 
-    public Tree(GameObjectCollection gameObjects, int trunkLayer, int leavesLayer, long seed, float blockSize,
+    public Tree(GameObjectCollection gameObjects, int trunkLayer, int leavesLayer, int fallingLeavesLayer,
+                long seed,
+                float blockSize,
                 Function<Float, Float> getTerrainHeight) {
         this.gameObjects = gameObjects;
         this.trunkLayer = trunkLayer;
         this.leavesLayer = leavesLayer;
+        this.fallingLeavesLayer = fallingLeavesLayer;
         this.rnd = new Random(seed);
         this.blockSize = blockSize;
         this.getTerrainHeight = getTerrainHeight;
@@ -42,6 +59,7 @@ public class Tree {
 
     /**
      * Generates trees in [minX,maxX] range
+     *
      * @param minX lower bound of tree creation
      * @param maxX upper bound of tree creation
      */
@@ -57,9 +75,9 @@ public class Tree {
                 int trunkHeight = this.rnd.nextInt(TREE_MIN_HEIGHT, TREE_MAX_HEIGHT);
                 int canopySize = this.rnd.nextInt(CANOPY_MIN, CANOPY_MAX);
                 canopySize -= canopySize % 2 == 0 ? 1 : 0; // makes the number odd
-                make_trunk(x, root_height, trunkHeight);
+                makeTrunk(x, root_height, trunkHeight);
                 // it's a minus because y coord is upside-down
-                make_leaves(x, root_height - trunkHeight * blockSize, canopySize);
+                makeLeaves(x, root_height - trunkHeight * blockSize, canopySize);
             }
             index += 1;
         }
@@ -67,30 +85,59 @@ public class Tree {
 
     /**
      * A helper method that generates the leaves of a tree
-     * @param x canopy center x location
+     *
+     * @param x            canopy center x location
      * @param canopyCenter canopy center y location
-     * @param canopySize side length of the canopy size
+     * @param canopySize   side length of the canopy size
      */
-    private void make_leaves(float x, float canopyCenter, int canopySize) {
+    private void makeLeaves(float x, float canopyCenter, int canopySize) {
         float canopyOffset = (canopySize / 2) * this.blockSize;
         for (int i = 0; i < canopySize; i++) {
             for (int j = 0; j < canopySize; j++) {
                 Vector2 pos = new Vector2(x + i * blockSize - canopyOffset,
                         canopyCenter + j * blockSize - canopyOffset);
-                Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(LEAF_COLOR));
-                GameObject leafObj = new GameObject(pos, Vector2.ONES.mult(this.blockSize), rect);
-                gameObjects.addGameObject(leafObj, leavesLayer);
-                leafObj.setTag("leaf");
-                float leafAnimationWaitTime = rnd.nextFloat(2f);
-                scheduleAnimationTransitions(leafObj, leafAnimationWaitTime);
-                //TODO: implement falling and reappearing leaves.
+                makeLeaf(pos);
             }
         }
     }
 
+    private void makeLeaf(Vector2 pos) {
+        Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(LEAF_COLOR));
+        Leaf leafObj = new Leaf(pos, Vector2.ONES.mult(this.blockSize), rect,this);
+        gameObjects.addGameObject(leafObj, leavesLayer);
+        leafObj.setTag("leaf");
+        float leafAnimationWaitTime = rnd.nextFloat(ANIMATION_WAIT_TIME_MAX);
+        scheduleAnimationTransitions(leafObj, leafAnimationWaitTime);
+        float leafLifeTime = rnd.nextFloat(LEAF_LIFE_TIME_MAX);
+        new ScheduledTask(leafObj, leafLifeTime, false,
+                () ->
+                {
+                    gameObjects.removeGameObject(leafObj, leavesLayer);
+                    gameObjects.addGameObject(leafObj, fallingLeavesLayer);
+                    leafObj.setTag(FALLING_LEAF_TAG);
+                    leafObj.transform().setVelocityY(LEAF_FALLING_VELOCITY);
+                    Transition transition = new Transition<>(leafObj,
+                            leafObj.transform()::setVelocityX,
+                            LEAF_X_MAX_VEL, -LEAF_X_MAX_VEL, Transition.CUBIC_INTERPOLATOR_FLOAT,
+                            LEAF_VEL_TRANSITION_TIME,
+                            Transition.TransitionType.TRANSITION_BACK_AND_FORTH, null);
+                    leafObj.horizontalTransition = transition;
+                    leafObj.renderer().fadeOut(FADE_OUT_TIME, () -> leafRebirth(leafObj, pos));
+                });
+    }
+
+    private void leafRebirth(GameObject leafObj, Vector2 pos) {
+        float leafDeathTime = rnd.nextFloat(LEAF_DEATH_TIME_MAX);
+        new ScheduledTask(leafObj, leafDeathTime, false, () -> {
+            makeLeaf(pos);
+            gameObjects.removeGameObject(leafObj, fallingLeavesLayer);
+        });
+    }
+
     /**
      * A helper method that schedules transitions to animate the leaves blowing in the wind.
-     * @param leafObj the leaf to animate
+     *
+     * @param leafObj               the leaf to animate
      * @param leafAnimationWaitTime schedule delay
      */
     private void scheduleAnimationTransitions(GameObject leafObj, float leafAnimationWaitTime) {
@@ -103,18 +150,18 @@ public class Tree {
                             (angle) -> {
                                 leafObj.renderer().setRenderableAngle(angle);
                             },
-                            0f,
-                            30f,
+                            LEAF_ANGLE_MIN,
+                            LEAF_ANGLE_MAX,
                             Transition.CUBIC_INTERPOLATOR_FLOAT,
-                            1.3f,
+                            LEAF_ANIMATION_CYCLE_DURATION,
                             Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                             null);
                     new Transition<Vector2>(leafObj,
                             leafObj::setDimensions,
-                            leafObj.getDimensions(),
-                            leafObj.getDimensions().multX(1.2f),
+                            leafObj.getDimensions().multX(LEAF_MIN_WIDTH_FACTOR),
+                            leafObj.getDimensions().multX(LEAF_MAX_WIDTH_FACTOR),
                             Transition.CUBIC_INTERPOLATOR_VECTOR,
-                            1.3f,
+                            LEAF_ANIMATION_CYCLE_DURATION,
                             Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                             null);
                 });
@@ -122,11 +169,12 @@ public class Tree {
 
     /**
      * A helper method that generates a trunk of a tree
+     *
      * @param root_x      its x position (actual)
      * @param root_y      its y position (actual)
      * @param trunkHeight the amount of blocks in the trunk
      */
-    private void make_trunk(float root_x, float root_y, int trunkHeight) {
+    private void makeTrunk(float root_x, float root_y, int trunkHeight) {
         for (int i = 1; i <= trunkHeight; i++) {
             Vector2 pos = new Vector2(root_x, root_y - i * this.blockSize);
             Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(TRUNK_COLOR));
@@ -134,5 +182,13 @@ public class Tree {
             gameObjects.addGameObject(trunk_obj, trunkLayer);
             trunk_obj.setTag("trunk");
         }
+    }
+
+    public void leafCollision(Leaf leaf){
+        leaf.setVelocity(Vector2.ZERO);
+        leaf.removeComponent(leaf.horizontalTransition);
+        gameObjects.removeGameObject(leaf,fallingLeavesLayer);
+        gameObjects.addGameObject(leaf,leavesLayer);
+        leaf.setTag("leaf");
     }
 }

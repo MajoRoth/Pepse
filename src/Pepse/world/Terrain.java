@@ -13,6 +13,8 @@ import java.util.Vector;
 
 public class Terrain {
 
+    private static final int TOPGROUND_DEPTH = 2;
+    private int topGroundLayer;
     private final int groundHeightAtX0;
     private final PerlinNoise perlinNoise;
     private GameObjectCollection gameObjects;
@@ -21,10 +23,12 @@ public class Terrain {
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
     private static final int TERRAIN_DEPTH = 20;
 
-    public Terrain(GameObjectCollection gameObjects, int groundLayer, Vector2 windowDimensions, int seed) {
+    public Terrain(GameObjectCollection gameObjects, int groundLayer,int topGroundLayer,
+                   Vector2 windowDimensions, int seed) {
 
         this.gameObjects = gameObjects;
         this.groundLayer = groundLayer;
+        this.topGroundLayer = topGroundLayer;
         this.groundHeightAtX0 = (int) (windowDimensions.y() * 2 / 3); //TODO set groundHeightAtX0
         this.perlinNoise = new PerlinNoise(seed);
     }
@@ -41,13 +45,18 @@ public class Terrain {
         int max = maxX + ((int) Block.SIZE - maxX % (int) Block.SIZE);
 
         for (int x = min; x < max; x += (int) Block.SIZE) {
-            for (int i = 0; i < this.TERRAIN_DEPTH; i++) {
+            for (int i = 0; i < TOPGROUND_DEPTH; i++) {
+                rect = new RectangleRenderable(ColorSupplier.approximateColor(BASE_GROUND_COLOR));
+                Block block = new Block(new Vector2(x, this.groundHeightAt(x) + i * Block.SIZE), rect);
+                this.gameObjects.addGameObject(block, topGroundLayer);
+                block.setTag("topGround");
+            }
+            for (int i = TOPGROUND_DEPTH; i < TERRAIN_DEPTH; i++) {
                 rect = new RectangleRenderable(ColorSupplier.approximateColor(BASE_GROUND_COLOR));
                 Block block = new Block(new Vector2(x, this.groundHeightAt(x) + i * Block.SIZE), rect);
                 this.gameObjects.addGameObject(block, groundLayer);
                 block.setTag("block");
             }
-
         }
     }
 
