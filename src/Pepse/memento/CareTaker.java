@@ -1,9 +1,6 @@
 package Pepse.memento;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CareTaker {
 
@@ -16,10 +13,21 @@ public class CareTaker {
 
     public void add(int key, Memento memento){
         this.mementoMap.put(key, memento);
+        this.debug();
     }
 
     public Memento get(int key){
         return this.mementoMap.get(key);
+    }
+
+
+    private void debug(){
+        System.out.println("------");
+        List<Integer> sortedList = new ArrayList<>(mementoMap.keySet());
+        Collections.sort(sortedList);
+        for (int i: sortedList) {
+            System.out.println(i);
+        }
     }
 
 

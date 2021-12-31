@@ -2,10 +2,7 @@ package Pepse;
 
 import Pepse.memento.CareTaker;
 import Pepse.memento.Memento;
-import Pepse.world.Avatar;
-import Pepse.world.Block;
-import Pepse.world.Sky;
-import Pepse.world.Terrain;
+import Pepse.world.*;
 import Pepse.world.daynight.Night;
 import Pepse.world.daynight.Sun;
 import Pepse.world.daynight.SunHalo;
@@ -19,6 +16,7 @@ import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.WindowController;
 import danogl.gui.rendering.Camera;
+import danogl.gui.rendering.RectangleRenderable;
 import danogl.util.Vector2;
 
 import java.awt.*;
@@ -76,6 +74,7 @@ public class PepseGameManager extends GameManager {
                 terrain::groundHeightAt);
         tree.createInRange(-1 * (int) windowWidth, 2 * (int) windowWidth); // Dan debugs tree creation
         //~~~until here
+
         Vector2 initialAvatarLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
         GameObject avatar = Avatar.create(gameObjects(), AVATAR_LAYER,
                 initialAvatarLocation, inputListener, imageReader);
@@ -87,6 +86,11 @@ public class PepseGameManager extends GameManager {
         gameObjects().layers().shouldLayersCollide(FALLING_LEAF_LAYER, TOPGROUND_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TOPGROUND_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TERRAIN_LAYER, false);
+
+
+        Vector2 initialAnimalLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
+        GameObject animal = Animal.create(gameObjects(), AVATAR_LAYER,
+                initialAnimalLocation, inputListener, imageReader);
     }
 
 
@@ -106,7 +110,7 @@ public class PepseGameManager extends GameManager {
             getOrGenerate(newKey + 1);
             curCareTakerKey += 1;
         } else if (newKey < this.curCareTakerKey) { // if moved a screen lefwards
-            removeAndStore(newKey + 2);
+            removeAndStore(newKey + 2); // TODO why +2?
             getOrGenerate(newKey - 1);
             curCareTakerKey -= 1;
         }

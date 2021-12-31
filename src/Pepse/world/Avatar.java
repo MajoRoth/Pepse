@@ -1,8 +1,12 @@
 package Pepse.world;
 
+import Pepse.display.EnergyDisplayer;
+import Pepse.util.FloatCounter;
 import com.sun.jdi.VMOutOfMemoryException;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
+import danogl.collisions.Layer;
+import danogl.components.CoordinateSpace;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.rendering.RectangleRenderable;
@@ -21,24 +25,37 @@ public class Avatar extends GameObject {
     private static final float FUEL_INCREASE_RATE = 0.5f;
     private final UserInputListener inputListener;
     private float fuel;
+    private static FloatCounter fuelCounter;
+    private static Vector2 dimensions;
+    private static Vector2 avatarDimensions = Vector2.ONES.mult(100);
 
-    public Avatar(Vector2 topLeftCorner, Vector2 dimensions, Renderable renderable,
+    public Avatar(Vector2 topLeftCorner, Vector2 dim, Renderable renderable,
                   UserInputListener inputListener) {
-        super(topLeftCorner, dimensions, renderable);
+        super(topLeftCorner, dim, renderable);
         this.inputListener = inputListener;
         this.fuel = MAX_FUEL;
+        fuelCounter = new FloatCounter(fuel);
+        dimensions = dim;
     }
 
     //TODO: Add character sprite and animations
     //TODO: Add fuel gauge (not mandatory)
     public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
                                     UserInputListener inputListener, ImageReader imageReader) {
-        Vector2 avatarDimensions = Vector2.ONES.mult(100);
         Renderable avatarRenderable = new RectangleRenderable(Color.ORANGE); //TODO: Change to avatar sprite
         GameObject avatar = new Avatar(topLeftCorner, avatarDimensions, avatarRenderable, inputListener);
         avatar.transform().setAccelerationY(GRAVITY);
         avatar.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         gameObjects.addGameObject(avatar, layer);
+
+        GameObject displayer = new EnergyDisplayer(
+                new Vector2((float)(dimensions.x() - 50), dimensions.y()-50),
+                new Vector2(30, 30),
+                fuelCounter
+        );
+        displayer.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
+        gameObjects.addGameObject(displayer, Layer.UI);
+
         return avatar;
     }
 
@@ -55,6 +72,7 @@ public class Avatar extends GameObject {
         }
         verticalMovement = handleJumpAndFly(verticalMovement);
         setVelocity(new Vector2(horizontalMovement, verticalMovement));
+        fuelCounter.setValue(fuel);
     }
 
     float handleJumpAndFly(float verticalMovement) {
