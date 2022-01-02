@@ -13,6 +13,9 @@ import java.awt.*;
 import java.util.Random;
 import java.util.function.Function;
 
+/**
+ * This class handles the creation of trunks and leaves.
+ */
 public class Tree {
     private static final Color TRUNK_COLOR = new Color(100, 50, 20);
     private static final Color LEAF_COLOR = new Color(50, 200, 30);
@@ -39,11 +42,21 @@ public class Tree {
     private final GameObjectCollection gameObjects;
     private final int trunkLayer;
     private final int leavesLayer;
-    private int fallingLeavesLayer;
+    private final int fallingLeavesLayer;
     private final Random rnd;
     private final float blockSize;
     private final Function<Float, Float> getTerrainHeight;
 
+    /**
+     * C'tor
+     * @param gameObjects this game's game object collection (needed for addition of leaves and trunks)
+     * @param trunkLayer the layer in which the tree trunks are
+     * @param leavesLayer the layer in which the leaves are
+     * @param fallingLeavesLayer the layer in which the falling leaves are
+     * @param seed the seed for the random functionalities
+     * @param blockSize the block size for leaf and trunk blocks
+     * @param getTerrainHeight a function that gets the height of the terrain at a given point
+     */
     public Tree(GameObjectCollection gameObjects, int trunkLayer, int leavesLayer, int fallingLeavesLayer,
                 long seed,
                 float blockSize,
@@ -85,7 +98,6 @@ public class Tree {
 
     /**
      * A helper method that generates the leaves of a tree
-     *
      * @param x            canopy center x location
      * @param canopyCenter canopy center y location
      * @param canopySize   side length of the canopy size
@@ -101,9 +113,13 @@ public class Tree {
         }
     }
 
+    /**
+     * A helper method that generates each leaf
+     * @param pos the leaf's position
+     */
     private void makeLeaf(Vector2 pos) {
         Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(LEAF_COLOR));
-        Leaf leafObj = new Leaf(pos, Vector2.ONES.mult(this.blockSize), rect,this);
+        Leaf leafObj = new Leaf(pos, Vector2.ONES.mult(this.blockSize), rect, this);
         gameObjects.addGameObject(leafObj, leavesLayer);
         leafObj.setTag("leaf");
         float leafAnimationWaitTime = rnd.nextFloat(ANIMATION_WAIT_TIME_MAX);
@@ -126,6 +142,11 @@ public class Tree {
                 });
     }
 
+    /**
+     * A method that handles the rebirth of a leaf (after it has passed away)
+     * @param leafObj
+     * @param pos
+     */
     private void leafRebirth(GameObject leafObj, Vector2 pos) {
         float leafDeathTime = rnd.nextFloat(LEAF_DEATH_TIME_MAX);
         new ScheduledTask(leafObj, leafDeathTime, false, () -> {
@@ -146,7 +167,7 @@ public class Tree {
                 false,
                 () ->
                 {
-                    new Transition<>(leafObj,
+                    Transition angleTrans = new Transition<>(leafObj,
                             (angle) -> {
                                 leafObj.renderer().setRenderableAngle(angle);
                             },
@@ -156,7 +177,7 @@ public class Tree {
                             LEAF_ANIMATION_CYCLE_DURATION,
                             Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                             null);
-                    new Transition<Vector2>(leafObj,
+                    Transition widthTrans = new Transition<Vector2>(leafObj,
                             leafObj::setDimensions,
                             leafObj.getDimensions().multX(LEAF_MIN_WIDTH_FACTOR),
                             leafObj.getDimensions().multX(LEAF_MAX_WIDTH_FACTOR),
@@ -164,6 +185,8 @@ public class Tree {
                             LEAF_ANIMATION_CYCLE_DURATION,
                             Transition.TransitionType.TRANSITION_BACK_AND_FORTH,
                             null);
+                    ((Leaf) leafObj).widthTransition = widthTrans;
+                    ((Leaf) leafObj).angleTransition = angleTrans;
                 });
     }
 
@@ -184,11 +207,49 @@ public class Tree {
         }
     }
 
-    public void leafCollision(Leaf leaf){
+    /**
+     * A method that defines what happens to a leaf when it hits the ground.
+     * Its in this class because i didn't want to send the gameObjectCollection gameObjects to Leaf on
+     * construction.
+     * @param leaf the leaf that fell
+     */
+    public void leafCollision(Leaf leaf) {
         leaf.setVelocity(Vector2.ZERO);
-        leaf.removeComponent(leaf.horizontalTransition);
-        gameObjects.removeGameObject(leaf,fallingLeavesLayer);
-        gameObjects.addGameObject(leaf,leavesLayer);
+        removeLeafTransitions(leaf);
+        gameObjects.removeGameObject(leaf, fallingLeavesLayer);
+        gameObjects.addGameObject(leaf, leavesLayer);
         leaf.setTag("leaf");
+    }
+
+    /**
+     * A helper method that removes the leaf's transitions.
+     * @param leaf
+     */
+    private void removeLeafTransitions(Leaf leaf) {
+        leaf.removeComponent(leaf.horizontalTransition);
+        leaf.removeComponent(leaf.angleTransition);
+        leaf.removeComponent(leaf.widthTransition);
+        new Transition<Float>(leaf,
+                leaf.transform()::setVelocityX,
+                leaf.getVelocity().x(), 0f, Transition.CUBIC_INTERPOLATOR_FLOAT,
+                LEAF_VEL_TRANSITION_TIME / 10,
+                Transition.TransitionType.TRANSITION_ONCE, null);
+        new Transition<>(leaf,
+                (angle) -> {
+                    leaf.renderer().setRenderableAngle(angle);
+                },
+                leaf.renderer().getRenderableAngle(), 0f,
+                Transition.CUBIC_INTERPOLATOR_FLOAT,
+                LEAF_ANIMATION_CYCLE_DURATION / 10,
+                Transition.TransitionType.TRANSITION_ONCE,
+                null);
+        new Transition<Vector2>(leaf,
+                leaf::setDimensions,
+                leaf.getDimensions(),
+                Vector2.ONES.mult(blockSize),
+                Transition.CUBIC_INTERPOLATOR_VECTOR,
+                LEAF_ANIMATION_CYCLE_DURATION / 10,
+                Transition.TransitionType.TRANSITION_ONCE,
+                null);
     }
 }

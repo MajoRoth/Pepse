@@ -13,7 +13,7 @@ import java.util.Vector;
 
 public class Terrain {
 
-    private static final int TOPGROUND_DEPTH = 2;
+    private static final int TOPGROUND_DEPTH = 5;
     private int topGroundLayer;
     private final int groundHeightAtX0;
     private final PerlinNoise perlinNoise;

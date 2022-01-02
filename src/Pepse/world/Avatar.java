@@ -41,7 +41,7 @@ public class Avatar extends GameObject {
     //TODO: Add character sprite and animations
     //TODO: Add fuel gauge (not mandatory)
     public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
-                                    UserInputListener inputListener, ImageReader imageReader) {
+                                     UserInputListener inputListener, ImageReader imageReader) {
         Renderable avatarRenderable = new RectangleRenderable(Color.ORANGE); //TODO: Change to avatar sprite
         GameObject avatar = new Avatar(topLeftCorner, avatarDimensions, avatarRenderable, inputListener);
         avatar.transform().setAccelerationY(GRAVITY);

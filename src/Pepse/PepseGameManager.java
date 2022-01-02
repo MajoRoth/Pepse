@@ -42,6 +42,7 @@ public class PepseGameManager extends GameManager {
     private final CareTaker careTaker = new CareTaker();
     private Terrain terrain;
     private Tree tree;
+    private static final String[] tags = new String[]{"trunk", "leaf", "block", "fallingLeaf", "topGround"};
     //~~~until here
 
 
@@ -69,10 +70,10 @@ public class PepseGameManager extends GameManager {
         //changed from local variable for memento
         this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER, TOPGROUND_LAYER,
                 windowController.getWindowDimensions(), 1);
-        terrain.createInRange((int) (-1 * windowWidth), (int) (2 * windowWidth));
+        terrain.createInRange(0, (int) (2 * windowWidth));
         this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, 1, Block.SIZE,
                 terrain::groundHeightAt);
-        tree.createInRange(-1 * (int) windowWidth, 2 * (int) windowWidth); // Dan debugs tree creation
+        tree.createInRange(0, 2 * (int) windowWidth); // Dan debugs tree creation
         //~~~until here
 
         Vector2 initialAvatarLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
@@ -110,8 +111,8 @@ public class PepseGameManager extends GameManager {
             getOrGenerate(newKey + 1);
             curCareTakerKey += 1;
         } else if (newKey < this.curCareTakerKey) { // if moved a screen lefwards
-            removeAndStore(newKey + 2); // TODO why +2?
-            getOrGenerate(newKey - 1);
+            removeAndStore(newKey + 2);
+            getOrGenerate(newKey);
             curCareTakerKey -= 1;
         }
     }
@@ -132,7 +133,6 @@ public class PepseGameManager extends GameManager {
     }
 
     private void removeAndStore(int key) {
-        String[] tags = new String[]{"trunk", "leaf", "block"};
         ArrayList<String> tags_array_list = new ArrayList<String>(Arrays.asList(tags));
         LinkedList<GameObject> rem = getObjectsOfTags(tags_array_list, keyToX(key), keyToX(key + 1));
         careTaker.add(key, new Memento(rem));
