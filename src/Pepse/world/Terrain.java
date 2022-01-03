@@ -34,7 +34,7 @@ public class Terrain {
     }
 
     public float groundHeightAt(float x) {
-        return this.groundHeightAtX0 + 2 * Block.SIZE * (float) this.perlinNoise.noise(x);
+        return this.groundHeightAtX0 + 3 * Block.SIZE * (float) this.perlinNoise.noise(x);
     }
 
     public void createInRange(int minX, int maxX) {

@@ -3,20 +3,20 @@ package Pepse;
 import Pepse.memento.CareTaker;
 import Pepse.memento.Memento;
 import Pepse.world.*;
+import Pepse.world.animal.Animal;
+import Pepse.world.animal.AnimalsGenerator;
 import Pepse.world.daynight.Night;
 import Pepse.world.daynight.Sun;
 import Pepse.world.daynight.SunHalo;
 import Pepse.world.trees.Tree;
 import danogl.GameManager;
 import danogl.GameObject;
-import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
 import danogl.gui.ImageReader;
 import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.WindowController;
 import danogl.gui.rendering.Camera;
-import danogl.gui.rendering.RectangleRenderable;
 import danogl.util.Vector2;
 
 import java.awt.*;
@@ -35,6 +35,7 @@ public class PepseGameManager extends GameManager {
     private static final int LEAVES_LAYER = Layer.BACKGROUND + 11;
     private static final int FALLING_LEAF_LAYER = LEAVES_LAYER + 1;
     private static final int NIGHT_CYCLE = 100;
+    private static final int SEED = 1;
     // For memento
     private static final Map<String, Integer> tagToLayerMap = new HashMap<String, Integer>();
     private int curCareTakerKey = 0; // Basically the screen index
@@ -42,7 +43,8 @@ public class PepseGameManager extends GameManager {
     private final CareTaker careTaker = new CareTaker();
     private Terrain terrain;
     private Tree tree;
-    private static final String[] tags = new String[]{"trunk", "leaf", "block", "fallingLeaf", "topGround"};
+    private static final String[] tags = new String[]{"trunk", "leaf", "block", "fallingLeaf", "topGround", "animal"};
+    private AnimalsGenerator animalsGenerator;
     //~~~until here
 
 
@@ -60,6 +62,7 @@ public class PepseGameManager extends GameManager {
         tagToLayerMap.put("block", TERRAIN_LAYER);
         tagToLayerMap.put("topGround", TOPGROUND_LAYER);
         tagToLayerMap.put("fallingLeaf", FALLING_LEAF_LAYER);
+        tagToLayerMap.put("animal", AVATAR_LAYER);
         this.windowWidth = windowController.getWindowDimensions().x();
         //~~~until here
         Sky.create(this.gameObjects(), windowController.getWindowDimensions(), SKY_LAYER);
@@ -69,9 +72,9 @@ public class PepseGameManager extends GameManager {
         SunHalo.create(gameObjects(), sun, new Color(255, 255, 0, 20), HALO_LAYER);
         //changed from local variable for memento
         this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER, TOPGROUND_LAYER,
-                windowController.getWindowDimensions(), 1);
+                windowController.getWindowDimensions(), SEED);
         terrain.createInRange(0, (int) (2 * windowWidth));
-        this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, 1, Block.SIZE,
+        this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, SEED, Block.SIZE,
                 terrain::groundHeightAt);
         tree.createInRange(0, 2 * (int) windowWidth); // Dan debugs tree creation
         //~~~until here
@@ -89,9 +92,15 @@ public class PepseGameManager extends GameManager {
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TERRAIN_LAYER, false);
 
 
-        Vector2 initialAnimalLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
-        GameObject animal = Animal.create(gameObjects(), AVATAR_LAYER,
-                initialAnimalLocation, inputListener, imageReader);
+        this.animalsGenerator = new AnimalsGenerator(gameObjects(), AVATAR_LAYER, 30, imageReader,
+                SEED, terrain::groundHeightAt);
+        this.animalsGenerator.createInRange(0 ,0);
+
+         /*
+         GameObject animal = Animal.create(gameObjects(), AVATAR_LAYER,
+                initialAnimalLocation, imageReader);
+
+          */
     }
 
 
@@ -124,6 +133,7 @@ public class PepseGameManager extends GameManager {
             int maxX = (int) keyToX(key + 1);
             terrain.createInRange(minX, maxX);
             tree.createInRange(minX, maxX);
+            animalsGenerator.createInRange(minX, maxX);
         } else { //Add
             LinkedList<GameObject> add = add_m.getState();
             for (GameObject obj : add) {
