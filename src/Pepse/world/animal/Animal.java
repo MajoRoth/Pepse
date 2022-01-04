@@ -5,6 +5,7 @@ import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
+import danogl.gui.rendering.ImageRenderable;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -24,7 +25,8 @@ public class Animal extends GameObject {
     public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
                                     ImageReader imageReader) {
 
-        Renderable animalRenderable = new RectangleRenderable(Color.RED); //TODO: Change to animal sprite
+//        Renderable animalRenderable = new RectangleRenderable(Color.RED); //TODO: Change to animal sprite
+        Renderable animalRenderable = imageReader.readImage("Pepse/pictures/Frog.png", true);
         GameObject animal = new Animal(topLeftCorner, animalDimensions, animalRenderable);
         animal.transform().setAccelerationY(GRAVITY);
         animal.physics().preventIntersectionsFromDirection(Vector2.ZERO);
