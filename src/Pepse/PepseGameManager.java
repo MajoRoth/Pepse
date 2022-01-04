@@ -89,6 +89,7 @@ public class PepseGameManager extends GameManager {
         gameObjects().addGameObject(new GameObject(Vector2.ZERO, Vector2.ZERO, null), FALLING_LEAF_LAYER);
         gameObjects().layers().shouldLayersCollide(FALLING_LEAF_LAYER, TOPGROUND_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TOPGROUND_LAYER, true);
+        gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TRUNK_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TERRAIN_LAYER, false);
 
 
