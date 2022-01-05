@@ -1,7 +1,7 @@
-package Pepse.world;
+package pepse.world;
 
-import Pepse.util.ColorSupplier;
-import Pepse.util.PerlinNoise;
+import pepse.util.ColorSupplier;
+import pepse.util.PerlinNoise;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
@@ -33,16 +33,15 @@ public class Terrain {
      *
      * @param gameObjects      the current game's objects
      * @param groundLayer      the layer of the ground
-     * @param topGroundLayer   the layer of the topmost ground
      * @param windowDimensions the dimensions of the winodow
      * @param seed             the random seed
      */
-    public Terrain(GameObjectCollection gameObjects, int groundLayer, int topGroundLayer,
+    public Terrain(GameObjectCollection gameObjects, int groundLayer,
                    Vector2 windowDimensions, int seed) {
 
         this.gameObjects = gameObjects;
         this.groundLayer = groundLayer;
-        this.topGroundLayer = topGroundLayer;
+        this.topGroundLayer = groundLayer + 1;
         this.groundHeightAtX0 = (int) (windowDimensions.y() * GROUND_HEIGHT_PERCENTAGE);
         this.perlinNoise = new PerlinNoise(seed);
     }

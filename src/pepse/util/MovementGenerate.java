@@ -1,6 +1,4 @@
-package Pepse.util;
-
-import danogl.util.Vector2;
+package pepse.util;
 
 import java.util.Random;
 

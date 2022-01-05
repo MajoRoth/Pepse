@@ -1,14 +1,13 @@
-package Pepse;
+package pepse;
 
-import Pepse.memento.CareTaker;
-import Pepse.memento.Memento;
-import Pepse.world.*;
-import Pepse.world.animal.Animal;
-import Pepse.world.animal.AnimalsGenerator;
-import Pepse.world.daynight.Night;
-import Pepse.world.daynight.Sun;
-import Pepse.world.daynight.SunHalo;
-import Pepse.world.trees.Tree;
+import pepse.memento.CareTaker;
+import pepse.memento.Memento;
+import pepse.world.*;
+import pepse.world.animal.AnimalsGenerator;
+import pepse.world.daynight.Night;
+import pepse.world.daynight.Sun;
+import pepse.world.daynight.SunHalo;
+import pepse.world.trees.Tree;
 import danogl.GameManager;
 import danogl.GameObject;
 import danogl.collisions.Layer;
@@ -87,11 +86,11 @@ public class PepseGameManager extends GameManager {
         tagToLayerMap.put(ANIMAL_TAG, AVATAR_LAYER);
         this.windowWidth = windowController.getWindowDimensions().x();
         Sky.create(this.gameObjects(), windowController.getWindowDimensions(), SKY_LAYER);
-        Night.create(gameObjects(), windowController.getWindowDimensions(), NIGHT_CYCLE, NIGHT_LAYER);
-        GameObject sun = Sun.create(windowController.getWindowDimensions(), NIGHT_CYCLE, gameObjects(),
-                SUN_LAYER);
-        SunHalo.create(gameObjects(), sun, HALO_COLOR, HALO_LAYER);
-        this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER, TOPGROUND_LAYER,
+        Night.create(gameObjects(), NIGHT_LAYER, windowController.getWindowDimensions(), NIGHT_CYCLE);
+        GameObject sun = Sun.create(gameObjects(), SUN_LAYER, windowController.getWindowDimensions(),
+                NIGHT_CYCLE);
+        SunHalo.create(gameObjects(), HALO_LAYER, sun, HALO_COLOR);
+        this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER,
                 windowController.getWindowDimensions(), seed);
         terrain.createInRange(0, (int) (2 * windowWidth));
         this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, seed, Block.SIZE,

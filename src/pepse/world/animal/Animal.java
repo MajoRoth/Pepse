@@ -1,6 +1,6 @@
-package Pepse.world.animal;
+package pepse.world.animal;
 
-import Pepse.util.MovementGenerate;
+import pepse.util.MovementGenerate;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.ImageReader;
@@ -15,7 +15,7 @@ public class Animal extends GameObject {
     private static final float MOVEMENT_SPEED = 300;
     private static final float GRAVITY = 500;
     private static final String ANIMAL_TAG = "animal";
-    private static final String FROG_ASSET = "Pepse/assets/Frog.png";
+    private static final String FROG_ASSET = "pepse/assets/Frog.png";
     private static Vector2 animalDimensions = Vector2.ONES.mult(40);
     private boolean shouldFlip = false;
 

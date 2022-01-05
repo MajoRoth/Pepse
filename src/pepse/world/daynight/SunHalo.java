@@ -1,9 +1,8 @@
-package Pepse.world.daynight;
+package pepse.world.daynight;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.CoordinateSpace;
-import danogl.components.Transition;
 import danogl.gui.rendering.OvalRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -20,14 +19,15 @@ public class SunHalo {
 
     /**
      * static method to create the halo
+     *
      * @param gameObjects - gameObjects() list
-     * @param sun - the sun gameobject
-     * @param color - the color of the halo
-     * @param layer - the layer that the halo will be at
+     * @param sun         - the sun gameobject
+     * @param color       - the color of the halo
+     * @param layer       - the layer that the halo will be at
      * @return
      */
-    public static GameObject create(GameObjectCollection gameObjects, GameObject sun,
-            Color color, int layer){
+    public static GameObject create(GameObjectCollection gameObjects, int layer, GameObject sun,
+                                    Color color) {
 
         Renderable renderable = new OvalRenderable(color);
         GameObject gameObject = new GameObject(Vector2.ZERO, new Vector2(HALLO_SIZE, HALLO_SIZE), renderable);

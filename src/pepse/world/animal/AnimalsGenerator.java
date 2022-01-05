@@ -1,4 +1,4 @@
-package Pepse.world.animal;
+package pepse.world.animal;
 
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
@@ -12,11 +12,11 @@ public class AnimalsGenerator {
 
     private static final float ANIMAL_SPAWN_BUFFER = 5;
     private final Random rnd;
-    private GameObjectCollection gameObjects;
-    private int layer;
-    private int blockSize;
-    private ImageReader imageReader;
-    private float ANIMAL_PROB = 0.075f;
+    private final GameObjectCollection gameObjects;
+    private final int layer;
+    private final int blockSize;
+    private final ImageReader imageReader;
+    private final float ANIMAL_PROB = 0.075f;
     private final Function<Float, Float> getTerrainHeight;
 
     /**
@@ -50,7 +50,7 @@ public class AnimalsGenerator {
         int min = minX - minX % (int) this.blockSize;
         int max = maxX + ((int) this.blockSize - maxX % (int) this.blockSize);
 
-        boolean[] placeAnimals = Pepse.util.RandomHelper.weightedCoin(ANIMAL_PROB,
+        boolean[] placeAnimals = pepse.util.RandomHelper.weightedCoin(ANIMAL_PROB,
                 (int) ((max - min) / this.blockSize), this.rnd);
 
         int index = 0;

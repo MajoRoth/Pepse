@@ -1,4 +1,4 @@
-package Pepse.memento;
+package pepse.memento;
 
 import danogl.GameObject;
 

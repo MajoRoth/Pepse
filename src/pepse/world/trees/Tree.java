@@ -1,7 +1,7 @@
-package Pepse.world.trees;
+package pepse.world.trees;
 
-import Pepse.util.ColorSupplier;
-import Pepse.world.Block;
+import pepse.util.ColorSupplier;
+import pepse.world.Block;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.ScheduledTask;
@@ -53,13 +53,14 @@ public class Tree {
 
     /**
      * C'tor
-     * @param gameObjects this game's game object collection (needed for addition of leaves and trunks)
-     * @param trunkLayer the layer in which the tree trunks are
-     * @param leavesLayer the layer in which the leaves are
+     *
+     * @param gameObjects        this game's game object collection (needed for addition of leaves and trunks)
+     * @param trunkLayer         the layer in which the tree trunks are
+     * @param leavesLayer        the layer in which the leaves are
      * @param fallingLeavesLayer the layer in which the falling leaves are
-     * @param seed the seed for the random functionalities
-     * @param blockSize the block size for leaf and trunk blocks
-     * @param getTerrainHeight a function that gets the height of the terrain at a given point
+     * @param seed               the seed for the random functionalities
+     * @param blockSize          the block size for leaf and trunk blocks
+     * @param getTerrainHeight   a function that gets the height of the terrain at a given point
      */
     public Tree(GameObjectCollection gameObjects, int trunkLayer, int leavesLayer, int fallingLeavesLayer,
                 long seed,
@@ -83,14 +84,14 @@ public class Tree {
     public void createInRange(int minX, int maxX) {
         int min = minX - minX % (int) this.blockSize;
         int max = maxX + ((int) this.blockSize - maxX % (int) this.blockSize);
-        boolean[] placeTrees = Pepse.util.RandomHelper.weightedCoin(TREE_PROB,
+        boolean[] placeTrees = pepse.util.RandomHelper.weightedCoin(TREE_PROB,
                 (int) ((max - min) / this.blockSize), this.rnd);
         int index = 0;
         for (int x = min; x < max; x += (int) this.blockSize) {
             if (placeTrees[index]) {
                 float root_height = this.getTerrainHeight.apply((float) x);
-                int trunkHeight = this.rnd.nextInt(TREE_MIN_HEIGHT, TREE_MAX_HEIGHT);
-                int canopySize = this.rnd.nextInt(CANOPY_MIN, CANOPY_MAX);
+                int trunkHeight = this.rnd.nextInt(TREE_MAX_HEIGHT- TREE_MIN_HEIGHT) + TREE_MIN_HEIGHT;
+                int canopySize = this.rnd.nextInt(CANOPY_MAX - CANOPY_MIN) + CANOPY_MIN;
                 canopySize -= canopySize % 2 == 0 ? 1 : 0; // makes the number odd
                 makeTrunk(x, root_height, trunkHeight);
                 // it's a minus because y coord is upside-down
@@ -102,6 +103,7 @@ public class Tree {
 
     /**
      * A helper method that generates the leaves of a tree
+     *
      * @param x            canopy center x location
      * @param canopyCenter canopy center y location
      * @param canopySize   side length of the canopy size
@@ -119,6 +121,7 @@ public class Tree {
 
     /**
      * A helper method that generates each leaf
+     *
      * @param pos the leaf's position
      */
     private void makeLeaf(Vector2 pos) {
@@ -126,9 +129,9 @@ public class Tree {
         Leaf leafObj = new Leaf(pos, Vector2.ONES.mult(this.blockSize), rect, this);
         gameObjects.addGameObject(leafObj, leavesLayer);
         leafObj.setTag(LEAF_TAG);
-        float leafAnimationWaitTime = rnd.nextFloat(ANIMATION_WAIT_TIME_MAX);
+        float leafAnimationWaitTime = rnd.nextFloat()*ANIMATION_WAIT_TIME_MAX;
         scheduleAnimationTransitions(leafObj, leafAnimationWaitTime);
-        float leafLifeTime = rnd.nextFloat(LEAF_LIFE_TIME_MAX);
+        float leafLifeTime = rnd.nextFloat()*LEAF_LIFE_TIME_MAX;
         new ScheduledTask(leafObj, leafLifeTime, false,
                 () ->
                 {
@@ -148,11 +151,12 @@ public class Tree {
 
     /**
      * A method that handles the rebirth of a leaf (after it has passed away)
+     *
      * @param leafObj
      * @param pos
      */
     private void leafRebirth(GameObject leafObj, Vector2 pos) {
-        float leafDeathTime = rnd.nextFloat(LEAF_DEATH_TIME_MAX);
+        float leafDeathTime = rnd.nextFloat()*LEAF_DEATH_TIME_MAX;
         new ScheduledTask(leafObj, leafDeathTime, false, () -> {
             makeLeaf(pos);
             gameObjects.removeGameObject(leafObj, fallingLeavesLayer);
@@ -205,8 +209,7 @@ public class Tree {
         for (int i = 1; i <= trunkHeight; i++) {
             Vector2 pos = new Vector2(root_x, root_y - i * this.blockSize);
             Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(TRUNK_COLOR));
-//            GameObject trunk_obj = new GameObject(pos, Vector2.ONES.mult(this.blockSize), rect);
-            GameObject trunk_obj = new Block(pos,rect);
+            GameObject trunk_obj = new Block(pos, rect);
             gameObjects.addGameObject(trunk_obj, trunkLayer);
             trunk_obj.setTag(TRUNK_TAG);
         }
@@ -216,6 +219,7 @@ public class Tree {
      * A method that defines what happens to a leaf when it hits the ground.
      * Its in this class because i didn't want to send the gameObjectCollection gameObjects to Leaf on
      * construction.
+     *
      * @param leaf the leaf that fell
      */
     public void leafCollision(Leaf leaf) {
@@ -228,6 +232,7 @@ public class Tree {
 
     /**
      * A helper method that removes the leaf's transitions.
+     *
      * @param leaf
      */
     private void removeLeafTransitions(Leaf leaf) {

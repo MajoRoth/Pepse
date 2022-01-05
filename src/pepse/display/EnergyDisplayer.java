@@ -1,9 +1,7 @@
-package Pepse.display;
+package pepse.display;
 
-import Pepse.util.FloatCounter;
+import pepse.util.FloatCounter;
 import danogl.GameObject;
-import danogl.collisions.GameObjectCollection;
-import danogl.gui.rendering.Renderable;
 import danogl.gui.rendering.TextRenderable;
 import danogl.util.Vector2;
 

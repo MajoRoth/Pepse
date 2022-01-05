@@ -1,7 +1,7 @@
-package Pepse.world;
+package pepse.world;
 
-import Pepse.display.EnergyDisplayer;
-import Pepse.util.FloatCounter;
+import pepse.display.EnergyDisplayer;
+import pepse.util.FloatCounter;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.collisions.Layer;
@@ -23,9 +23,9 @@ public class Avatar extends GameObject {
     private static final float FUEL_INCREASE_RATE = 0.5f;
     private static final float DISPLAYER_OFFSET = 50;
     private static final float DISPLAYER_DIMENSIONS = 30;
-    private static final String AVATAR_WALK_1_URL = "Pepse/assets/avatarWalk1.png";
-    private static final String AVATAR_WALK_2_URL = "Pepse/assets/avatarWalk2.png";
-    private static final String AVATAR_JUMP_URL = "Pepse/assets/avatarJump.png";
+    private static final String AVATAR_WALK_1_URL = "pepse/assets/avatarWalk1.png";
+    private static final String AVATAR_WALK_2_URL = "pepse/assets/avatarWalk2.png";
+    private static final String AVATAR_JUMP_URL = "pepse/assets/avatarJump.png";
     private final Renderable idleRenderable;
     private final Renderable jumpRenderable;
     private final Renderable walkRenderable;
@@ -66,13 +66,13 @@ public class Avatar extends GameObject {
      * @param imageReader an image reader
      * @return the created avatar object
      */
-    public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
+    public static Avatar create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
                                     UserInputListener inputListener, ImageReader imageReader) {
         Renderable idleRenderable = imageReader.readImage(AVATAR_WALK_1_URL, true);
         Renderable jumpRenderable = imageReader.readImage(AVATAR_JUMP_URL, true);
         Renderable walkRenderable = new AnimationRenderable(new String[]{AVATAR_WALK_1_URL,
                 AVATAR_WALK_2_URL}, imageReader, true, 0.1);
-        GameObject avatar = new Avatar(topLeftCorner, avatarDimensions, idleRenderable, jumpRenderable,
+        Avatar avatar = new Avatar(topLeftCorner, avatarDimensions, idleRenderable, jumpRenderable,
                 walkRenderable, inputListener);
         avatar.transform().setAccelerationY(GRAVITY);
         avatar.physics().preventIntersectionsFromDirection(Vector2.ZERO);

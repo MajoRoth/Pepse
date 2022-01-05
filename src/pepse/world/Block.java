@@ -1,4 +1,4 @@
-package Pepse.world;
+package pepse.world;
 
 import danogl.GameObject;
 import danogl.components.GameObjectPhysics;
