@@ -10,10 +10,21 @@ import danogl.util.Vector2;
 
 import java.awt.*;
 
+/**
+ * Night - black background with changes occupancy
+ */
 public class Night {
 
     private static final Float MIDNIGHT_OPACITY = 0.7f;
 
+    /**
+     * static method to create the black background
+     * @param gameObjects
+     * @param windowDimensions
+     * @param cycleLength
+     * @param layer
+     * @return
+     */
     public static GameObject create(GameObjectCollection gameObjects, Vector2 windowDimensions,
                                     float cycleLength, int layer){
 

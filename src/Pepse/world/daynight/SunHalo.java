@@ -10,8 +10,19 @@ import danogl.util.Vector2;
 
 import java.awt.*;
 
+/**
+ * sun halo - follows the sun and surronds it
+ */
 public class SunHalo {
 
+    /**
+     * static method to create the halo
+     * @param gameObjects
+     * @param sun
+     * @param color
+     * @param layer
+     * @return
+     */
     public static GameObject create(GameObjectCollection gameObjects, GameObject sun,
             Color color, int layer){
 
@@ -23,9 +34,6 @@ public class SunHalo {
         gameObject.addComponent((f) -> {
             gameObject.setCenter(sun.getCenter());
         });
-
-
-
 
         return gameObject;
 

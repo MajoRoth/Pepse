@@ -11,12 +11,23 @@ import danogl.util.Vector2;
 
 import java.awt.*;
 
+/**
+ * game object of sun - moves through the sky in an ellipse
+ */
 public class Sun {
 
     private static final Vector2 sunDimensions = new Vector2(150, 150);
     private static Vector2 sunCenter;
     private static Vector2 sunVector;
 
+    /**
+     * static method to create the sun
+     * @param windowDimensions
+     * @param cycleLength
+     * @param gameObjects
+     * @param layer
+     * @return
+     */
     public static GameObject create(Vector2 windowDimensions, float cycleLength,
                                     GameObjectCollection gameObjects, int layer){
 
@@ -44,6 +55,12 @@ public class Sun {
         return gameObject;
     }
 
+    /**
+     * calculates the position of the sun by the angle
+     * @param windowDimensions
+     * @param angleInSky
+     * @return
+     */
     private static Vector2 calcSunPosition(Vector2 windowDimensions, float angleInSky){
         return sunCenter.add(
                 new Vector2((float)Math.sin(Math.toRadians(angleInSky+180)),
