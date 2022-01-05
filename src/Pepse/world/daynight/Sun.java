@@ -19,7 +19,7 @@ public class Sun {
     private static final Vector2 sunDimensions = new Vector2(150, 150);
     private static final float SUN_RADIUS_CONSTANT = 5;
     private static final float ANGLE_OFF_SET = 180;
-    private static final int AMPLITUDE = 0.3;
+    private static final int AMPLITUDE = 3;
     private static final float CHANGE_RATE = 500;
     private static Vector2 sunCenter;
     private static Vector2 sunVector;

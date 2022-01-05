@@ -24,7 +24,7 @@ public class Tree {
     private static final int CANOPY_MIN = 7;
     private static final int TREE_MAX_HEIGHT = 17;
     private static final int TREE_MIN_HEIGHT = 12;
-    private static final float TREE_PROB = 0.075f;
+    private static final float TREE_PROB = 0.05f;
     private static final float FADE_OUT_TIME = 4f;
     private static final float LEAF_FALLING_VELOCITY = 150;
     private static final float ANIMATION_WAIT_TIME_MAX = 2f;
