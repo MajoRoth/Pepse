@@ -36,48 +36,63 @@ public class PepseGameManager extends GameManager {
     private static final int FALLING_LEAF_LAYER = LEAVES_LAYER + 1;
     private static final int NIGHT_CYCLE = 100;
     private static final int SEED = 1;
-    // For memento
-    private static final Map<String, Integer> tagToLayerMap = new HashMap<String, Integer>();
+    private static final Map<String, Integer> tagToLayerMap = new HashMap<>();
+    private static final String TRUNK_TAG = "trunk";
+    private static final String LEAF_TAG = "leaf";
+    private static final String BLOCK_TAG = "block";
+    private static final String TOPGROUND_TAG = "topGround";
+    private static final String FALLING_LEAF_TAG = "fallingLeaf";
+    private static final String ANIMAL_TAG = "animal";
+    private static final Color HALO_COLOR = new Color(255, 255, 0, 20);
+    private static final int BLOCK_SIZE = 30;
     private int curCareTakerKey = 0; // Basically the screen index
     private float windowWidth;
     private final CareTaker careTaker = new CareTaker();
     private Terrain terrain;
     private Tree tree;
-    private static final String[] tags = new String[]{"trunk", "leaf", "block", "fallingLeaf", "topGround", "animal"};
+    private static final String[] tags = new String[]{TRUNK_TAG, LEAF_TAG, BLOCK_TAG, FALLING_LEAF_TAG,
+            TOPGROUND_TAG, ANIMAL_TAG};
     private AnimalsGenerator animalsGenerator;
-    //~~~until here
 
-
+    /**
+     * The programs main function
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         new PepseGameManager().run();
     }
 
+    /**
+     * The function that initializes the Game
+     *
+     * @param imageReader      an image reader
+     * @param soundReader      a sound reader
+     * @param inputListener    an input reader
+     * @param windowController the window controller
+     */
     @Override
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
-        // For memento
-        tagToLayerMap.put("trunk", TRUNK_LAYER);
-        tagToLayerMap.put("leaf", LEAVES_LAYER);
-        tagToLayerMap.put("block", TERRAIN_LAYER);
-        tagToLayerMap.put("topGround", TOPGROUND_LAYER);
-        tagToLayerMap.put("fallingLeaf", FALLING_LEAF_LAYER);
-        tagToLayerMap.put("animal", AVATAR_LAYER);
+        tagToLayerMap.put(TRUNK_TAG, TRUNK_LAYER);
+        tagToLayerMap.put(LEAF_TAG, LEAVES_LAYER);
+        tagToLayerMap.put(BLOCK_TAG, TERRAIN_LAYER);
+        tagToLayerMap.put(TOPGROUND_TAG, TOPGROUND_LAYER);
+        tagToLayerMap.put(FALLING_LEAF_TAG, FALLING_LEAF_LAYER);
+        tagToLayerMap.put(ANIMAL_TAG, AVATAR_LAYER);
         this.windowWidth = windowController.getWindowDimensions().x();
-        //~~~until here
         Sky.create(this.gameObjects(), windowController.getWindowDimensions(), SKY_LAYER);
         Night.create(gameObjects(), windowController.getWindowDimensions(), NIGHT_CYCLE, NIGHT_LAYER);
         GameObject sun = Sun.create(windowController.getWindowDimensions(), NIGHT_CYCLE, gameObjects(),
                 SUN_LAYER);
-        SunHalo.create(gameObjects(), sun, new Color(255, 255, 0, 20), HALO_LAYER);
-        //changed from local variable for memento
+        SunHalo.create(gameObjects(), sun, HALO_COLOR, HALO_LAYER);
         this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER, TOPGROUND_LAYER,
                 windowController.getWindowDimensions(), SEED);
         terrain.createInRange(0, (int) (2 * windowWidth));
         this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, SEED, Block.SIZE,
                 terrain::groundHeightAt);
-        tree.createInRange(0, 2 * (int) windowWidth); // Dan debugs tree creation
-        //~~~until here
+        tree.createInRange(0, 2 * (int) windowWidth);
 
         Vector2 initialAvatarLocation = Vector2.RIGHT.mult(windowController.getWindowDimensions().x() / 2);
         GameObject avatar = Avatar.create(gameObjects(), AVATAR_LAYER,
@@ -91,27 +106,16 @@ public class PepseGameManager extends GameManager {
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TOPGROUND_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TRUNK_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TERRAIN_LAYER, false);
-
-
-        this.animalsGenerator = new AnimalsGenerator(gameObjects(), AVATAR_LAYER, 30, imageReader,
+        this.animalsGenerator = new AnimalsGenerator(gameObjects(), AVATAR_LAYER, BLOCK_SIZE, imageReader,
                 SEED, terrain::groundHeightAt);
-        this.animalsGenerator.createInRange(0 ,0);
-
-         /*
-         GameObject animal = Animal.create(gameObjects(), AVATAR_LAYER,
-                initialAnimalLocation, imageReader);
-
-          */
+        this.animalsGenerator.createInRange(0, 0);
     }
 
-
-    @FunctionalInterface
-    public interface Component {
-        void update(float deltaTime);
-    }
-
-    // Memento Behaviour
-
+    /**
+     * the update method
+     *
+     * @param deltaTime the time between updates
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -127,6 +131,11 @@ public class PepseGameManager extends GameManager {
         }
     }
 
+    /**
+     * gets or generates a chunk of game objects of a certain key
+     *
+     * @param key the key
+     */
     private void getOrGenerate(int key) {
         Memento add_m = careTaker.get(key);
         if (add_m == null) { //Generate
@@ -143,8 +152,13 @@ public class PepseGameManager extends GameManager {
         }
     }
 
+    /**
+     * removes and stores to the memento a chunk of game objects of a certain key
+     *
+     * @param key the key
+     */
     private void removeAndStore(int key) {
-        ArrayList<String> tags_array_list = new ArrayList<String>(Arrays.asList(tags));
+        ArrayList<String> tags_array_list = new ArrayList<>(Arrays.asList(tags));
         LinkedList<GameObject> rem = getObjectsOfTags(tags_array_list, keyToX(key), keyToX(key + 1));
         careTaker.add(key, new Memento(rem));
         for (GameObject obj : rem) {
@@ -153,16 +167,34 @@ public class PepseGameManager extends GameManager {
         }
     }
 
-
+    /**
+     * Translates a certain x to its key (many to one)
+     *
+     * @param x the x
+     * @return the key
+     */
     private int xToKey(float x) {
         int negativeOffset = x < 0 ? 1 : 0;
         return (int) x / (int) this.windowWidth - negativeOffset;
     }
 
+    /**
+     * Translates a key to the first x that corresponds to it (one to one)
+     *
+     * @param key the key
+     * @return the x
+     */
     private float keyToX(int key) {
         return key * this.windowWidth;
     }
 
+    /**
+     * A helper method that gets all objects with certain tags
+     * @param tags the tag array list
+     * @param minX the minimum x
+     * @param maxX the maximum x
+     * @return a linked list of game objects
+     */
     private LinkedList<GameObject> getObjectsOfTags(ArrayList<String> tags, float minX, float maxX) {
         LinkedList<GameObject> ret = new LinkedList<>();
         for (GameObject obj : gameObjects()) {
