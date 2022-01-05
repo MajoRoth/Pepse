@@ -11,6 +11,9 @@ import danogl.util.Vector2;
 import java.awt.*;
 import java.util.Vector;
 
+/**
+ * Terrain in changing height with perlin noise
+ */
 public class Terrain {
 
     private static final int TOPGROUND_DEPTH = 5;
@@ -23,6 +26,14 @@ public class Terrain {
     private static final Color BASE_GROUND_COLOR = new Color(212, 123, 74);
     private static final int TERRAIN_DEPTH = 20;
 
+    /**
+     * constructor
+     * @param gameObjects
+     * @param groundLayer
+     * @param topGroundLayer
+     * @param windowDimensions
+     * @param seed
+     */
     public Terrain(GameObjectCollection gameObjects, int groundLayer,int topGroundLayer,
                    Vector2 windowDimensions, int seed) {
 
@@ -33,10 +44,20 @@ public class Terrain {
         this.perlinNoise = new PerlinNoise(seed);
     }
 
+    /**
+     * calculates the height of the ground at each x
+     * @param x
+     * @return
+     */
     public float groundHeightAt(float x) {
         return this.groundHeightAtX0 + 3 * Block.SIZE * (float) this.perlinNoise.noise(x);
     }
 
+    /**
+     * creates all the block in a given range and adds to gameObject()
+     * @param minX
+     * @param maxX
+     */
     public void createInRange(int minX, int maxX) {
 
         Renderable rect;
