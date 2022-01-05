@@ -3,7 +3,6 @@ package Pepse.util;
 import java.util.Random;
 
 public class RandomHelper {
-    //TODO: get Perlin Noise implementation from the web for terrain
 
     /**
      * Flips a weighted coin n times.

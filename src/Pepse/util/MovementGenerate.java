@@ -4,10 +4,19 @@ import danogl.util.Vector2;
 
 import java.util.Random;
 
+/**
+ * this class handles the movement of the animals and returns random movemnts
+ */
 public final class MovementGenerate {
 
     static Random rd = new Random();
 
+    /**
+     * returns the new horizontal velocity
+     * @param velocity - current velocity
+     * @param movementSpeed - constant
+     * @return
+     */
     public static float getHorizontalVelocity(float velocity, float movementSpeed){
             float rnd = rd.nextFloat();
             if (velocity == 0){
@@ -19,6 +28,12 @@ public final class MovementGenerate {
         return velocity;
     }
 
+    /**
+     * returns vertical velocity
+     * @param velocity - current vertical velocity
+     * @param movementSpeed - constant
+     * @return
+     */
     public static float getJump(float velocity, float movementSpeed){
         boolean grounded = velocity == 0;
         if (grounded) {

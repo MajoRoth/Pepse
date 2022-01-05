@@ -2,6 +2,10 @@ package Pepse.util;
 
 import java.util.Random;
 
+/**
+ * PerlinNoise - generates a random smooth function in order to create the terrain.
+ * it was taken from github as a whole.
+ */
 public class PerlinNoise {
 
     private double seed;
