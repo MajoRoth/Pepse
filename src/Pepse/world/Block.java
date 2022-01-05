@@ -13,8 +13,8 @@ public class Block extends GameObject {
 
     /**
      * constructor for block
-     * @param topLeftCorner
-     * @param renderable
+     * @param topLeftCorner the topleft cornet
+     * @param renderable the renderable by which to render
      */
     public Block (Vector2 topLeftCorner, Renderable renderable) {
         super(topLeftCorner, Vector2.ONES.mult(SIZE), renderable);
