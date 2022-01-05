@@ -38,6 +38,9 @@ public class Tree {
     private static final Float LEAF_X_MAX_VEL = 30f;
     private static final float LEAF_VEL_TRANSITION_TIME = 1.5f;
     private static final String FALLING_LEAF_TAG = "fallingLeaf";
+    private static final String LEAF_TAG = "leaf";
+    private static final float LEAF_ANIMATION_CYCLE_DEVIDOR = 10;
+    private static final String TRUNK_TAG = "trunk";
 
 
     private final GameObjectCollection gameObjects;
@@ -122,7 +125,7 @@ public class Tree {
         Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(LEAF_COLOR));
         Leaf leafObj = new Leaf(pos, Vector2.ONES.mult(this.blockSize), rect, this);
         gameObjects.addGameObject(leafObj, leavesLayer);
-        leafObj.setTag("leaf");
+        leafObj.setTag(LEAF_TAG);
         float leafAnimationWaitTime = rnd.nextFloat(ANIMATION_WAIT_TIME_MAX);
         scheduleAnimationTransitions(leafObj, leafAnimationWaitTime);
         float leafLifeTime = rnd.nextFloat(LEAF_LIFE_TIME_MAX);
@@ -205,7 +208,7 @@ public class Tree {
 //            GameObject trunk_obj = new GameObject(pos, Vector2.ONES.mult(this.blockSize), rect);
             GameObject trunk_obj = new Block(pos,rect);
             gameObjects.addGameObject(trunk_obj, trunkLayer);
-            trunk_obj.setTag("trunk");
+            trunk_obj.setTag(TRUNK_TAG);
         }
     }
 
@@ -220,7 +223,7 @@ public class Tree {
         removeLeafTransitions(leaf);
         gameObjects.removeGameObject(leaf, fallingLeavesLayer);
         gameObjects.addGameObject(leaf, leavesLayer);
-        leaf.setTag("leaf");
+        leaf.setTag(LEAF_TAG);
     }
 
     /**
@@ -234,7 +237,7 @@ public class Tree {
         new Transition<Float>(leaf,
                 leaf.transform()::setVelocityX,
                 leaf.getVelocity().x(), 0f, Transition.CUBIC_INTERPOLATOR_FLOAT,
-                LEAF_VEL_TRANSITION_TIME / 10,
+                LEAF_VEL_TRANSITION_TIME / LEAF_ANIMATION_CYCLE_DEVIDOR,
                 Transition.TransitionType.TRANSITION_ONCE, null);
         new Transition<>(leaf,
                 (angle) -> {
@@ -242,7 +245,7 @@ public class Tree {
                 },
                 leaf.renderer().getRenderableAngle(), 0f,
                 Transition.CUBIC_INTERPOLATOR_FLOAT,
-                LEAF_ANIMATION_CYCLE_DURATION / 10,
+                LEAF_ANIMATION_CYCLE_DURATION / LEAF_ANIMATION_CYCLE_DEVIDOR,
                 Transition.TransitionType.TRANSITION_ONCE,
                 null);
         new Transition<Vector2>(leaf,
@@ -250,7 +253,7 @@ public class Tree {
                 leaf.getDimensions(),
                 Vector2.ONES.mult(blockSize),
                 Transition.CUBIC_INTERPOLATOR_VECTOR,
-                LEAF_ANIMATION_CYCLE_DURATION / 10,
+                LEAF_ANIMATION_CYCLE_DURATION / LEAF_ANIMATION_CYCLE_DEVIDOR,
                 Transition.TransitionType.TRANSITION_ONCE,
                 null);
     }
