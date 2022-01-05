@@ -18,6 +18,15 @@ public class AnimalsGenerator {
     private float ANIMAL_PROB = 0.075f;
     private final Function<Float, Float> getTerrainHeight;
 
+    /**
+     * animal generator - creates animals depends in range.
+     * @param gameObjects
+     * @param layer
+     * @param blockSize
+     * @param imageReader
+     * @param seed
+     * @param getTerrainHeight
+     */
     public AnimalsGenerator(GameObjectCollection gameObjects, int layer, int blockSize, ImageReader imageReader,
                             int seed, Function<Float, Float> getTerrainHeight){
 
@@ -30,7 +39,11 @@ public class AnimalsGenerator {
         this.getTerrainHeight = getTerrainHeight;
     }
 
-
+    /**
+     * create animals in range of movement.
+     * @param minX
+     * @param maxX
+     */
     public void createInRange(int minX, int maxX){
 
         int min = minX - minX % (int) this.blockSize;

@@ -7,16 +7,34 @@ import danogl.gui.ImageReader;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
 
+/**
+ * Animal GameObject
+ */
 public class Animal extends GameObject {
 
     private static final float MOVEMENT_SPEED = 300;
     private static final float GRAVITY = 500;
     private static Vector2 animalDimensions = Vector2.ONES.mult(40);
 
+    /**
+     * constructor for animal
+     * @param topLeftCorner
+     * @param dim
+     * @param renderable
+     */
     public Animal(Vector2 topLeftCorner, Vector2 dim, Renderable renderable) {
         super(topLeftCorner, dim, renderable);
     }
 
+    /**
+     * static method to create animals
+     * call Animal.create({params}) to create an animal and add ot game
+     * @param gameObjects
+     * @param layer
+     * @param topLeftCorner
+     * @param imageReader
+     * @return
+     */
     public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
                                     ImageReader imageReader) {
 
@@ -32,6 +50,10 @@ public class Animal extends GameObject {
     }
 
 
+    /**
+     * controls animal's movement
+     * @param deltaTime
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
