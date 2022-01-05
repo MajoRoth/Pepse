@@ -9,6 +9,8 @@ import danogl.collisions.Layer;
 import danogl.components.CoordinateSpace;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
+import danogl.gui.rendering.AnimationRenderable;
+import danogl.gui.rendering.ImageRenderable;
 import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
@@ -42,7 +44,8 @@ public class Avatar extends GameObject {
     //TODO: Add fuel gauge (not mandatory)
     public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
                                      UserInputListener inputListener, ImageReader imageReader) {
-        Renderable avatarRenderable = new RectangleRenderable(Color.ORANGE); //TODO: Change to avatar sprite
+
+        Renderable avatarRenderable = imageReader.readImage("assets/avatarWalk1.png",true);
         GameObject avatar = new Avatar(topLeftCorner, avatarDimensions, avatarRenderable, inputListener);
         avatar.transform().setAccelerationY(GRAVITY);
         avatar.physics().preventIntersectionsFromDirection(Vector2.ZERO);
@@ -71,6 +74,9 @@ public class Avatar extends GameObject {
             horizontalMovement += MOVEMENT_SPEED;
         }
         verticalMovement = handleJumpAndFly(verticalMovement);
+        if (verticalMovement != 0f) {
+            Renderable avatarRenderable = imageReader.readImage("assets/avatarWalk1.png",true);
+        }
         setVelocity(new Vector2(horizontalMovement, verticalMovement));
         fuelCounter.setValue(fuel);
     }

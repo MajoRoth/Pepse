@@ -1,6 +1,7 @@
 package Pepse.world.trees;
 
 import Pepse.util.ColorSupplier;
+import Pepse.world.Block;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.components.ScheduledTask;
@@ -201,7 +202,8 @@ public class Tree {
         for (int i = 1; i <= trunkHeight; i++) {
             Vector2 pos = new Vector2(root_x, root_y - i * this.blockSize);
             Renderable rect = new RectangleRenderable(ColorSupplier.approximateColor(TRUNK_COLOR));
-            GameObject trunk_obj = new GameObject(pos, Vector2.ONES.mult(this.blockSize), rect);
+//            GameObject trunk_obj = new GameObject(pos, Vector2.ONES.mult(this.blockSize), rect);
+            GameObject trunk_obj = new Block(pos,rect);
             gameObjects.addGameObject(trunk_obj, trunkLayer);
             trunk_obj.setTag("trunk");
         }

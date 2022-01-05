@@ -22,7 +22,7 @@ public final class MovementGenerate {
             if (velocity == 0){
                 return (float)0.8*movementSpeed;
             }
-            if (rnd < 0.001) {
+            if (rnd < 0.04) {
                 return -velocity;
             }
         return velocity;
@@ -39,11 +39,11 @@ public final class MovementGenerate {
         if (grounded) {
             float rnd = rd.nextFloat();
             if (rnd < 0.001) {
-                return (float)  movementSpeed;
+                return movementSpeed;
             } else if (rnd < 0.01){
-                return (float)  0.7* movementSpeed;
+                return movementSpeed;
             }
-            else if (rnd < 0.05){
+            else if (rnd < 0.09){
                 return (float)  0.5* movementSpeed;
             }
         }

@@ -4,13 +4,8 @@ import Pepse.util.MovementGenerate;
 import danogl.GameObject;
 import danogl.collisions.GameObjectCollection;
 import danogl.gui.ImageReader;
-import danogl.gui.UserInputListener;
-import danogl.gui.rendering.ImageRenderable;
-import danogl.gui.rendering.RectangleRenderable;
 import danogl.gui.rendering.Renderable;
 import danogl.util.Vector2;
-
-import java.awt.*;
 
 public class Animal extends GameObject {
 
@@ -26,7 +21,7 @@ public class Animal extends GameObject {
                                     ImageReader imageReader) {
 
 //        Renderable animalRenderable = new RectangleRenderable(Color.RED); //TODO: Change to animal sprite
-        Renderable animalRenderable = imageReader.readImage("Pepse/pictures/Frog.png", true);
+        Renderable animalRenderable = imageReader.readImage("Pepse/assets/Frog.png", true);
         GameObject animal = new Animal(topLeftCorner, animalDimensions, animalRenderable);
         animal.transform().setAccelerationY(GRAVITY);
         animal.physics().preventIntersectionsFromDirection(Vector2.ZERO);
@@ -42,7 +37,7 @@ public class Animal extends GameObject {
         super.update(deltaTime);
         float horizontalMovement = MovementGenerate.getHorizontalVelocity(this.getVelocity().x(), MOVEMENT_SPEED);
         float verticalMovement = this.getVelocity().y() - MovementGenerate.getJump(this.getVelocity().y(), MOVEMENT_SPEED);
-
+        this.renderer().setIsFlippedHorizontally(this.getVelocity().x() < 0);
         setVelocity(new Vector2(horizontalMovement, verticalMovement));
     }
 }
