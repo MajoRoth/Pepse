@@ -15,6 +15,7 @@ public class Animal extends GameObject {
     private static final float MOVEMENT_SPEED = 300;
     private static final float GRAVITY = 500;
     private static Vector2 animalDimensions = Vector2.ONES.mult(40);
+    private boolean shouldFlip = false;
 
     /**
      * constructor for animal
@@ -59,7 +60,9 @@ public class Animal extends GameObject {
         super.update(deltaTime);
         float horizontalMovement = MovementGenerate.getHorizontalVelocity(this.getVelocity().x(), MOVEMENT_SPEED);
         float verticalMovement = this.getVelocity().y() - MovementGenerate.getJump(this.getVelocity().y(), MOVEMENT_SPEED);
-        this.renderer().setIsFlippedHorizontally(this.getVelocity().x() < 0);
+        if (horizontalMovement != 0f)
+            shouldFlip = horizontalMovement < 0;
+        this.renderer().setIsFlippedHorizontally(shouldFlip);
         setVelocity(new Vector2(horizontalMovement, verticalMovement));
     }
 }
