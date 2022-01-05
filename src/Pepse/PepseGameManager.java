@@ -35,7 +35,6 @@ public class PepseGameManager extends GameManager {
     private static final int LEAVES_LAYER = Layer.BACKGROUND + 11;
     private static final int FALLING_LEAF_LAYER = LEAVES_LAYER + 1;
     private static final int NIGHT_CYCLE = 100;
-    private static final int SEED = 1;
     private static final Map<String, Integer> tagToLayerMap = new HashMap<>();
     private static final String TRUNK_TAG = "trunk";
     private static final String LEAF_TAG = "leaf";
@@ -45,6 +44,7 @@ public class PepseGameManager extends GameManager {
     private static final String ANIMAL_TAG = "animal";
     private static final Color HALO_COLOR = new Color(255, 255, 0, 20);
     private static final int BLOCK_SIZE = 30;
+    private static final int SEED_MAX_VALUE = 32767;
     private int curCareTakerKey = 0; // Basically the screen index
     private float windowWidth;
     private final CareTaker careTaker = new CareTaker();
@@ -53,6 +53,7 @@ public class PepseGameManager extends GameManager {
     private static final String[] tags = new String[]{TRUNK_TAG, LEAF_TAG, BLOCK_TAG, FALLING_LEAF_TAG,
             TOPGROUND_TAG, ANIMAL_TAG};
     private AnimalsGenerator animalsGenerator;
+    private int seed;
 
     /**
      * The programs main function
@@ -75,6 +76,9 @@ public class PepseGameManager extends GameManager {
     public void initializeGame(ImageReader imageReader, SoundReader soundReader,
                                UserInputListener inputListener, WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
+        Random rnd = new Random();
+        seed = rnd.nextInt(SEED_MAX_VALUE);
+
         tagToLayerMap.put(TRUNK_TAG, TRUNK_LAYER);
         tagToLayerMap.put(LEAF_TAG, LEAVES_LAYER);
         tagToLayerMap.put(BLOCK_TAG, TERRAIN_LAYER);
@@ -88,9 +92,9 @@ public class PepseGameManager extends GameManager {
                 SUN_LAYER);
         SunHalo.create(gameObjects(), sun, HALO_COLOR, HALO_LAYER);
         this.terrain = new Terrain(gameObjects(), TERRAIN_LAYER, TOPGROUND_LAYER,
-                windowController.getWindowDimensions(), SEED);
+                windowController.getWindowDimensions(), seed);
         terrain.createInRange(0, (int) (2 * windowWidth));
-        this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, SEED, Block.SIZE,
+        this.tree = new Tree(gameObjects(), TRUNK_LAYER, LEAVES_LAYER, FALLING_LEAF_LAYER, seed, Block.SIZE,
                 terrain::groundHeightAt);
         tree.createInRange(0, 2 * (int) windowWidth);
 
@@ -107,8 +111,8 @@ public class PepseGameManager extends GameManager {
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TRUNK_LAYER, true);
         gameObjects().layers().shouldLayersCollide(AVATAR_LAYER, TERRAIN_LAYER, false);
         this.animalsGenerator = new AnimalsGenerator(gameObjects(), AVATAR_LAYER, BLOCK_SIZE, imageReader,
-                SEED, terrain::groundHeightAt);
-        this.animalsGenerator.createInRange(0, 0);
+                seed, terrain::groundHeightAt);
+        animalsGenerator.createInRange(0, 2 * (int) windowWidth);
     }
 
     /**
@@ -190,6 +194,7 @@ public class PepseGameManager extends GameManager {
 
     /**
      * A helper method that gets all objects with certain tags
+     *
      * @param tags the tag array list
      * @param minX the minimum x
      * @param maxX the maximum x
