@@ -11,6 +11,15 @@ for every block x we a toss a non euqal probability coin to decide if we want to
 the we choose a random height, and after that we generate a random size of canopy.
 we get form game manager a functional interface that tells as for each block what is the height of
 the terrain. with the help of that we can generate trees without the dependency of terrain.
+we had a challenge with implementing the leaves - we need to stop the transition when they touched the ground.
+we chose that Leaf should not inherit from block - because we didnt want to get infinite mass and collisions.
+therefore to stop the transitions of the trees when touching the ground,
+we overridden onCollision() and we removed the transitions and we added transitioning that do not repeat,
+to zero the velocity after the library will delete the previous transition
+we chose to implement the class Leaf that wasn't in the original API,
+do to 2 main reasons:
+1. the overridden for onCollision
+2. to keep track on the transition (so we can delete them later)
 
 BONUS: we added animals, we created them in a simmilar way to the avatar,
 but we added the ability to randomly move and jump,
