@@ -17,16 +17,20 @@ import java.awt.*;
 public class Sun {
 
     private static final Vector2 sunDimensions = new Vector2(150, 150);
+    private static final float SUN_RADIUS_CONSTANT = 5;
+    private static final float ANGLE_OFF_SET = 180;
+    private static final int AMPLITUDE = 0.3;
+    private static final float CHANGE_RATE = 500;
     private static Vector2 sunCenter;
     private static Vector2 sunVector;
 
     /**
      * static method to create the sun
-     * @param windowDimensions
-     * @param cycleLength
-     * @param gameObjects
-     * @param layer
-     * @return
+     * @param windowDimensions - dimensions of the window
+     * @param cycleLength - length of day
+     * @param gameObjects - gameObjectd() list
+     * @param layer - the layer that the sun will be at
+     * @return sun
      */
     public static GameObject create(Vector2 windowDimensions, float cycleLength,
                                     GameObjectCollection gameObjects, int layer){
@@ -40,7 +44,7 @@ public class Sun {
         gameObject.setTag("Sun");
 
         sunCenter = new Vector2(windowDimensions.x()/2, windowDimensions.y()/2);
-        sunVector = new Vector2(windowDimensions.x()/5, windowDimensions.y()/5);
+        sunVector = new Vector2(windowDimensions.x()/SUN_RADIUS_CONSTANT, windowDimensions.y()/SUN_RADIUS_CONSTANT);
 
         new Transition<Float>(gameObject,
                 (f) -> {gameObject.setCenter(calcSunPosition(windowDimensions, f));},
@@ -57,15 +61,15 @@ public class Sun {
 
     /**
      * calculates the position of the sun by the angle
-     * @param windowDimensions
-     * @param angleInSky
+     * @param windowDimensions - the dimensions of the window
+     * @param angleInSky - the current angle of the sun
      * @return
      */
     private static Vector2 calcSunPosition(Vector2 windowDimensions, float angleInSky){
         return sunCenter.add(
-                new Vector2((float)Math.sin(Math.toRadians(angleInSky+180)),
-                        (float)Math.cos(Math.toRadians(angleInSky+180))).mult(
-                        (float) (1+0.3*Math.sin(Math.toRadians(angleInSky-90)))*500
+                new Vector2((float)Math.sin(Math.toRadians(angleInSky+ANGLE_OFF_SET)),
+                        (float)Math.cos(Math.toRadians(angleInSky+ANGLE_OFF_SET))).mult(
+                        (float) (1+AMPLITUDE*Math.sin(Math.toRadians(angleInSky-ANGLE_OFF_SET/2)))*CHANGE_RATE
                 )
         );
     }

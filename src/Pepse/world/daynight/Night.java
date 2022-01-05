@@ -19,10 +19,10 @@ public class Night {
 
     /**
      * static method to create the black background
-     * @param gameObjects
-     * @param windowDimensions
-     * @param cycleLength
-     * @param layer
+     * @param gameObjects - gameObjects() list
+     * @param windowDimensions - yhe dimensions of the window
+     * @param cycleLength - the length of a day
+     * @param layer - the layer that the sky will be at
      * @return
      */
     public static GameObject create(GameObjectCollection gameObjects, Vector2 windowDimensions,

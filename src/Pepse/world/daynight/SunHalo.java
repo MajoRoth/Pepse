@@ -15,22 +15,25 @@ import java.awt.*;
  */
 public class SunHalo {
 
+    private static final String SUN_HALO_TAG = "Sun Halo";
+    private static final float HALLO_SIZE = 250;
+
     /**
      * static method to create the halo
-     * @param gameObjects
-     * @param sun
-     * @param color
-     * @param layer
+     * @param gameObjects - gameObjects() list
+     * @param sun - the sun gameobject
+     * @param color - the color of the halo
+     * @param layer - the layer that the halo will be at
      * @return
      */
     public static GameObject create(GameObjectCollection gameObjects, GameObject sun,
             Color color, int layer){
 
         Renderable renderable = new OvalRenderable(color);
-        GameObject gameObject = new GameObject(Vector2.ZERO, new Vector2(250, 250), renderable);
+        GameObject gameObject = new GameObject(Vector2.ZERO, new Vector2(HALLO_SIZE, HALLO_SIZE), renderable);
         gameObject.setCoordinateSpace(CoordinateSpace.CAMERA_COORDINATES);
         gameObjects.addGameObject(gameObject, layer);
-        gameObject.setTag("Sun Halo");
+        gameObject.setTag(SUN_HALO_TAG);
         gameObject.addComponent((f) -> {
             gameObject.setCenter(sun.getCenter());
         });

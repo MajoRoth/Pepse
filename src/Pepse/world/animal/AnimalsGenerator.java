@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 public class AnimalsGenerator {
 
+    private static final float ANIMAL_SPAWN_BUFFER = 5;
     private final Random rnd;
     private GameObjectCollection gameObjects;
     private int layer;
@@ -20,12 +21,12 @@ public class AnimalsGenerator {
 
     /**
      * animal generator - creates animals depends in range.
-     * @param gameObjects
-     * @param layer
-     * @param blockSize
-     * @param imageReader
-     * @param seed
-     * @param getTerrainHeight
+     * @param gameObjects - gameobjects() list
+     * @param layer - the layer of the animals
+     * @param blockSize - size of block constant
+     * @param imageReader - image reader from game maanger
+     * @param seed - the random seed
+     * @param getTerrainHeight - function that returns the height of the terrain as supplied in Terrain
      */
     public AnimalsGenerator(GameObjectCollection gameObjects, int layer, int blockSize, ImageReader imageReader,
                             int seed, Function<Float, Float> getTerrainHeight){
@@ -41,8 +42,8 @@ public class AnimalsGenerator {
 
     /**
      * create animals in range of movement.
-     * @param minX
-     * @param maxX
+     * @param minX - the most left x coor to be rendered
+     * @param maxX - the most right x coor to be rendered
      */
     public void createInRange(int minX, int maxX){
 
@@ -58,7 +59,7 @@ public class AnimalsGenerator {
                 float root_height = this.getTerrainHeight.apply((float) x);
 
                 GameObject animal1 = Animal.create(gameObjects, this.layer,
-                        new Vector2(x,root_height - 5* blockSize), imageReader);
+                        new Vector2(x,root_height - ANIMAL_SPAWN_BUFFER * blockSize), imageReader);
             }
             index += 1;
         }

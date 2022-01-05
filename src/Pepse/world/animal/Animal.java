@@ -14,6 +14,8 @@ public class Animal extends GameObject {
 
     private static final float MOVEMENT_SPEED = 300;
     private static final float GRAVITY = 500;
+    private static final String ANIMAL_TAG = "animal";
+    private static final String FROG_ASSET = "Pepse/assets/Frog.png";
     private static Vector2 animalDimensions = Vector2.ONES.mult(40);
     private boolean shouldFlip = false;
 
@@ -30,22 +32,22 @@ public class Animal extends GameObject {
     /**
      * static method to create animals
      * call Animal.create({params}) to create an animal and add ot game
-     * @param gameObjects
-     * @param layer
-     * @param topLeftCorner
-     * @param imageReader
+     * @param gameObjects - gameobjects() list
+     * @param layer - the layer of the animals
+     * @param topLeftCorner - the spawn place
+     * @param imageReader - image reader supplied by Game Manager
      * @return
      */
     public static GameObject create(GameObjectCollection gameObjects, int layer, Vector2 topLeftCorner,
                                     ImageReader imageReader) {
 
 //        Renderable animalRenderable = new RectangleRenderable(Color.RED); //TODO: Change to animal sprite
-        Renderable animalRenderable = imageReader.readImage("Pepse/assets/Frog.png", true);
+        Renderable animalRenderable = imageReader.readImage(FROG_ASSET, true);
         GameObject animal = new Animal(topLeftCorner, animalDimensions, animalRenderable);
         animal.transform().setAccelerationY(GRAVITY);
         animal.physics().preventIntersectionsFromDirection(Vector2.ZERO);
         gameObjects.addGameObject(animal, layer);
-        animal.setTag("animal");
+        animal.setTag(ANIMAL_TAG);
 
         return animal;
     }
