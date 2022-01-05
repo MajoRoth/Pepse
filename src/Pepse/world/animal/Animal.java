@@ -42,7 +42,7 @@ public class Animal extends GameObject {
         super.update(deltaTime);
         float horizontalMovement = MovementGenerate.getHorizontalVelocity(this.getVelocity().x(), MOVEMENT_SPEED);
         float verticalMovement = this.getVelocity().y() - MovementGenerate.getJump(this.getVelocity().y(), MOVEMENT_SPEED);
-
+        this.renderer().setIsFlippedHorizontally(this.getVelocity().x() < 0);
         setVelocity(new Vector2(horizontalMovement, verticalMovement));
     }
 }
