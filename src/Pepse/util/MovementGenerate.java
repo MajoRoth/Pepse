@@ -9,6 +9,11 @@ import java.util.Random;
  */
 public final class MovementGenerate {
 
+    private static final float BIG_JUMP_PROB = 0.01f;
+    private static final float MEDIUM_JUMP_PROB = 0.015f;
+    private static final float MEDIUM_JUMP_HEIGHT = 0.8f;
+    private static final float SMALL_JUMP_PROB = 0.09f;
+    private static final float SMALL_JUMP_HEIGHT = 0.5f;
     static Random rd = new Random();
 
     /**
@@ -38,13 +43,13 @@ public final class MovementGenerate {
         boolean grounded = velocity == 0;
         if (grounded) {
             float rnd = rd.nextFloat();
-            if (rnd < 0.001) {
+            if (rnd < BIG_JUMP_PROB) {
                 return movementSpeed;
-            } else if (rnd < 0.01){
-                return movementSpeed;
+            } else if (rnd < MEDIUM_JUMP_PROB){
+                return MEDIUM_JUMP_HEIGHT * movementSpeed;
             }
-            else if (rnd < 0.09){
-                return (float)  0.5* movementSpeed;
+            else if (rnd < SMALL_JUMP_PROB){
+                return (float)  SMALL_JUMP_HEIGHT* movementSpeed;
             }
         }
         return 0;
